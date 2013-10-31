@@ -1,0 +1,19 @@
+{
+  "name": "supertest-scy",
+  "version": "0.1.0",
+  "description": "My extensions to SuperTest",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/scy/supertest-scy"
+  },
+  "keywords": [
+    "supertest",
+    "test"
+  ],
+  "author": "Tim Weber",
+  "license": "BSD"
+}
