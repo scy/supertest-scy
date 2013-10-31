@@ -17,6 +17,7 @@
   "author": "Tim Weber",
   "license": "BSD",
   "dependencies": {
-    "supertest": "~0.8.1"
+    "supertest": "~0.8.1",
+    "tv4": "~1.0.10"
   }
 }
