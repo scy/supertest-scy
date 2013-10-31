@@ -15,5 +15,8 @@
     "test"
   ],
   "author": "Tim Weber",
-  "license": "BSD"
+  "license": "BSD",
+  "dependencies": {
+    "supertest": "~0.8.1"
+  }
 }
