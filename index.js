@@ -13,6 +13,61 @@ supertest.defaultCredentials = function (user, pass) {
 	defaultCredentials = new Buffer(user + ':' + pass).toString('base64');
 };
 
+var legalTldChars = 'abcdefghijklmnopqrstuvwxyz';
+var legalDomainStartChars = legalTldChars + '1234567890';
+var legalDomainChars = legalDomainStartChars + '-';
+
+var legalConservativeLocalPartChars = 'abcdefghijklmnopqrstuvwxyz01234567890-._';
+var legalLiberalLocalPartChars = '+^';
+
+supertest.getRandomChar = function (choices) {
+	return choices.charAt(Math.floor(Math.random() * choices.length));
+};
+
+supertest.generateRandomString = function (length, start, mid) {
+	var res = '';
+	mid = (typeof mid == 'undefined') ? start : mid;
+	if (length >= 1) {
+		res += supertest.getRandomChar(start);
+		length--;
+	}
+	while (length-- >= 1) {
+		res += supertest.getRandomChar(mid);
+	}
+	return res;
+};
+
+supertest.generateRandomLengthString = function (min, max, start, mid) {
+	var span = max - min;
+	return supertest.generateRandomString(
+		Math.floor(Math.random() * span) + min,
+		start, mid
+	);
+};
+
+supertest.generateConservativeDomain = function () {
+	var parts = [];
+	parts.push(supertest.generateRandomLengthString(3, 25, legalDomainStartChars, legalDomainChars));
+	parts.push(supertest.generateRandomLengthString(2, 3, legalTldChars));
+	return parts.join('.');
+};
+
+supertest.generateLiberalDomain = function () {
+	var parts = [], count = Math.floor(Math.random() * 5) + 1;
+	for (var i = 0; i < count; i++) {
+		parts.push(supertest.generateRandomLengthString(2, 25, legalDomainStartChars, legalDomainChars));
+	}
+	return parts.join('.');
+};
+
+supertest.generateConservativeEmail = function () {
+	return (
+		supertest.generateRandomLengthString(3, 25, legalConservativeLocalPartChars)
+		+ '@' +
+		supertest.generateConservativeDomain()
+	);
+};
+
 // Get the Test prototype, because we're going to enhance it! \o/
 var Test = supertest.Test;
 
