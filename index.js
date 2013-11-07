@@ -68,6 +68,24 @@ supertest.generateConservativeEmail = function () {
 	);
 };
 
+// Use .end(supertest.debug(done)) to get this.
+supertest.debug = function (done) {
+	return function (err, ag) {
+		var done_result = done.apply(this, arguments);
+		console.log("\n\n===== ADDITIONAL DEBUGGING INFORMATION =====\n");
+		if (err) {
+			console.log(err);
+		} else {
+			console.log('No error.');
+		}
+		console.log("\n" + ag.req._header);
+		console.log(ag.res.statusCode);
+		console.log(ag.res.headers);
+		console.log(ag.res.text);
+		return done_result;
+	};
+};
+
 // Get the Test prototype, because we're going to enhance it! \o/
 var Test = supertest.Test;
 
