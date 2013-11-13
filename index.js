@@ -110,16 +110,27 @@ Test.prototype.expectSchema = function (schema, e) {
 // Extend Test's assert() method in order to do the JSON Schema tests.
 (function (oldAssert) {
 	Test.prototype.assert = function (res, fn) {
-		var ret = oldAssert.apply(this, arguments);
-		if (!this._schemas) return ret;
+		// We need to fake "fn" when passing it to the original assert, to find
+		// out what it has been called with.
+		// Note that we cannot do something like fn_args = oldAssert.apply() here and "return arguments"
+		// in the function body, since oldAssert doesn't always return fn's return value. :(
+		var fn_args;
+		oldAssert.apply(this, [res, function () { fn_args = arguments; }]);
+		// If it received an error, we simply pass that to the _real_ fn and are done.
+		if (fn_args.length > 0 && fn_args[0]) {
+			return fn.apply(this, fn_args);
+		}
+		// If everything else was fine, it's time to do some work.
+		// But only if there are schemas defined. ;)
+		if (!this._schemas) return fn.apply(this, fn_args);
 		for (var i = 0; i < this._schemas.length; i++) {
 			if (!tv4.validate(res.body, this._schemas[i])) {
 				var e = tv4.error;
 				return fn(new Error(
 					'schema validation failed (' + e.code + ' at ' + e.schemaPath + '): ' + e.message
-				));
+				), res);
 			}
 		}
-		return ret;
+		return fn.apply(this, fn_args);
 	};
 })(Test.prototype.assert);
