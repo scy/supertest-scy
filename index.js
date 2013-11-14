@@ -39,10 +39,8 @@ supertest.generateRandomString = function (length, start, mid) {
 
 supertest.generateRandomLengthString = function (min, max, start, mid) {
 	var span = max - min;
-	return supertest.generateRandomString(
-		Math.floor(Math.random() * span) + min,
-		start, mid
-	);
+	var length = Math.floor(Math.random() * (span + 1)) + min;
+	return supertest.generateRandomString(length, start, mid);
 };
 
 supertest.generateConservativeDomain = function () {
