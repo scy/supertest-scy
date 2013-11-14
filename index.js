@@ -64,11 +64,14 @@ supertest.generateLiberalDomain = function () {
 };
 
 supertest.generateConservativeEmail = function () {
-	return (
-		supertest.generateRandomLengthString(3, 25, legalConservativeLocalPartChars)
-		+ '@' +
-		supertest.generateConservativeDomain()
-	);
+	// generateRandomLengthString() is not flexible enough to ensure all RFC rules for email
+	// addresses are considered, so let's simply run it until we find one that's okay.
+	// (Consecutive dots or dots at the beginning or end are a problem.)
+	var localpart = '';
+	do {
+		localpart = supertest.generateRandomLengthString(3, 25, legalConservativeLocalPartChars);
+	} while (localpart.match(/\.{2,}/) || localpart.match(/^\./) || localpart.match(/\.$/))
+	return localpart + "@" + supertest.generateConservativeDomain();
 };
 
 // Use .end(supertest.debug(done)) to get this.
