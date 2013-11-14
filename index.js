@@ -24,23 +24,28 @@ supertest.getRandomChar = function (choices) {
 	return choices.charAt(Math.floor(Math.random() * choices.length));
 };
 
-supertest.generateRandomString = function (length, start, mid) {
+supertest.generateRandomString = function (length, start, mid, end) {
 	var res = '';
 	mid = (typeof mid == 'undefined') ? start : mid;
+	end = (typeof end == 'undefined') ? mid : end;
 	if (length >= 1) {
 		res += supertest.getRandomChar(start);
 		length--;
 	}
-	while (length-- >= 1) {
+	while (length >= 2) {
 		res += supertest.getRandomChar(mid);
+		length--;
+	}
+	if (length >= 1) {
+		res += supertest.getRandomChar(end);
 	}
 	return res;
 };
 
-supertest.generateRandomLengthString = function (min, max, start, mid) {
+supertest.generateRandomLengthString = function (min, max, start, mid, end) {
 	var span = max - min;
 	var length = Math.floor(Math.random() * (span + 1)) + min;
-	return supertest.generateRandomString(length, start, mid);
+	return supertest.generateRandomString(length, start, mid, end);
 };
 
 supertest.generateConservativeDomain = function () {
