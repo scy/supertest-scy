@@ -14,8 +14,8 @@ supertest.defaultCredentials = function (user, pass) {
 };
 
 var legalTldChars = 'abcdefghijklmnopqrstuvwxyz';
-var legalDomainStartChars = legalTldChars + '1234567890';
-var legalDomainChars = legalDomainStartChars + '-';
+var legalDomainStartEndChars = legalTldChars + '1234567890';
+var legalDomainChars = legalDomainStartEndChars + '-';
 
 var legalConservativeLocalPartChars = 'abcdefghijklmnopqrstuvwxyz01234567890-._';
 var legalLiberalLocalPartChars = '+^';
@@ -50,7 +50,7 @@ supertest.generateRandomLengthString = function (min, max, start, mid, end) {
 
 supertest.generateConservativeDomain = function () {
 	var parts = [];
-	parts.push(supertest.generateRandomLengthString(3, 25, legalDomainStartChars, legalDomainChars));
+	parts.push(supertest.generateRandomLengthString(3, 25, legalDomainStartEndChars, legalDomainChars, legalDomainStartEndChars));
 	parts.push(supertest.generateRandomLengthString(2, 3, legalTldChars));
 	return parts.join('.');
 };
@@ -58,7 +58,7 @@ supertest.generateConservativeDomain = function () {
 supertest.generateLiberalDomain = function () {
 	var parts = [], count = Math.floor(Math.random() * 5) + 1;
 	for (var i = 0; i < count; i++) {
-		parts.push(supertest.generateRandomLengthString(2, 25, legalDomainStartChars, legalDomainChars));
+		parts.push(supertest.generateRandomLengthString(2, 25, legalDomainStartEndChars, legalDomainChars, legalDomainStartEndChars));
 	}
 	return parts.join('.');
 };
