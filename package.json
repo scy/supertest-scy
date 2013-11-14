@@ -4,7 +4,7 @@
   "description": "My extensions to SuperTest",
   "main": "index.js",
   "scripts": {
-    "test": "mocha -R spec"
+    "test": "./node_modules/.bin/mocha -R spec"
   },
   "repository": {
     "type": "git",
@@ -19,5 +19,8 @@
   "dependencies": {
     "supertest": "~0.8.1",
     "tv4": "~1.0.10"
+  },
+  "devDependencies": {
+    "mocha": "~1.14.0"
   }
 }
