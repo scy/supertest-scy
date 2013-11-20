@@ -2,14 +2,17 @@
 
 // We provide everything supertest provides.
 var supertest = require('supertest');
-module.exports = supertest;
+var exp = module.exports = supertest;
+for (var key in supertest) {
+	exp[key] = supertest[key];
+}
 
 // We also use tv4 for JSON Schema validation. It's exported for others to use.
-var tv4 = supertest.tv4 = require('tv4');
+var tv4 = exp.tv4 = require('tv4');
 
 var defaultCredentials = false;
 
-supertest.defaultCredentials = function (user, pass) {
+exp.defaultCredentials = function (user, pass) {
 	defaultCredentials = new Buffer(user + ':' + pass).toString('base64');
 };
 
@@ -20,62 +23,62 @@ var legalDomainChars = legalDomainStartEndChars + '-';
 var legalConservativeLocalPartChars = 'abcdefghijklmnopqrstuvwxyz01234567890-._';
 var legalLiberalLocalPartChars = '+^';
 
-supertest.getRandomChar = function (choices) {
+exp.getRandomChar = function (choices) {
 	return choices.charAt(Math.floor(Math.random() * choices.length));
 };
 
-supertest.generateRandomString = function (length, start, mid, end) {
+exp.generateRandomString = function (length, start, mid, end) {
 	var res = '';
 	mid = (typeof mid == 'undefined') ? start : mid;
 	end = (typeof end == 'undefined') ? mid : end;
 	if (length >= 1) {
-		res += supertest.getRandomChar(start);
+		res += exp.getRandomChar(start);
 		length--;
 	}
 	while (length >= 2) {
-		res += supertest.getRandomChar(mid);
+		res += exp.getRandomChar(mid);
 		length--;
 	}
 	if (length >= 1) {
-		res += supertest.getRandomChar(end);
+		res += exp.getRandomChar(end);
 	}
 	return res;
 };
 
-supertest.generateRandomLengthString = function (min, max, start, mid, end) {
+exp.generateRandomLengthString = function (min, max, start, mid, end) {
 	var span = max - min;
 	var length = Math.floor(Math.random() * (span + 1)) + min;
-	return supertest.generateRandomString(length, start, mid, end);
+	return exp.generateRandomString(length, start, mid, end);
 };
 
-supertest.generateConservativeDomain = function () {
+exp.generateConservativeDomain = function () {
 	var parts = [];
-	parts.push(supertest.generateRandomLengthString(3, 25, legalDomainStartEndChars, legalDomainChars, legalDomainStartEndChars));
-	parts.push(supertest.generateRandomLengthString(2, 3, legalTldChars));
+	parts.push(exp.generateRandomLengthString(3, 25, legalDomainStartEndChars, legalDomainChars, legalDomainStartEndChars));
+	parts.push(exp.generateRandomLengthString(2, 3, legalTldChars));
 	return parts.join('.');
 };
 
-supertest.generateLiberalDomain = function () {
+exp.generateLiberalDomain = function () {
 	var parts = [], count = Math.floor(Math.random() * 5) + 1;
 	for (var i = 0; i < count; i++) {
-		parts.push(supertest.generateRandomLengthString(2, 25, legalDomainStartEndChars, legalDomainChars, legalDomainStartEndChars));
+		parts.push(exp.generateRandomLengthString(2, 25, legalDomainStartEndChars, legalDomainChars, legalDomainStartEndChars));
 	}
 	return parts.join('.');
 };
 
-supertest.generateConservativeEmail = function () {
+exp.generateConservativeEmail = function () {
 	// generateRandomLengthString() is not flexible enough to ensure all RFC rules for email
 	// addresses are considered, so let's simply run it until we find one that's okay.
 	// (Consecutive dots or dots at the beginning or end are a problem.)
 	var localpart = '';
 	do {
-		localpart = supertest.generateRandomLengthString(3, 25, legalConservativeLocalPartChars);
+		localpart = exp.generateRandomLengthString(3, 25, legalConservativeLocalPartChars);
 	} while (localpart.match(/\.{2,}/) || localpart.match(/^\./) || localpart.match(/\.$/))
-	return localpart + "@" + supertest.generateConservativeDomain();
+	return localpart + "@" + exp.generateConservativeDomain();
 };
 
 // Use .end(supertest.debug(done)) to get this.
-supertest.debug = function (done) {
+exp.debug = function (done) {
 	return function (err, ag) {
 		var done_result = done.apply(this, arguments);
 		console.log("\n\n===== ADDITIONAL DEBUGGING INFORMATION =====\n");
@@ -93,7 +96,7 @@ supertest.debug = function (done) {
 };
 
 // Get the Test prototype, because we're going to enhance it! \o/
-var Test = supertest.Test;
+var Test = exp.Test;
 
 // Sets the HTTP Basic auth header.
 Test.prototype.auth = function () {
