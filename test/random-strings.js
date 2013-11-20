@@ -7,8 +7,8 @@ describe("a string with random length", function () {
 			var min = Math.floor(Math.random() * 10);
 			var max = Math.floor(Math.random() * 30) + min;
 			var string = sts.generateRandomLengthString(min, max, "abcdefgh");
-			assert(string.length >= min, "the string '" + string + "' is shorter than " + min + "characters");
-			assert(string.length <= max, "the string '" + string + "' is longer than " + max + "characters");
+			assert(string.length >= min, "the string '" + string + "' is shorter than " + min + " characters");
+			assert(string.length <= max, "the string '" + string + "' is longer than " + max + " characters");
 		}
 	});
 	it("should not neglect any of the characters in its set", function () {
