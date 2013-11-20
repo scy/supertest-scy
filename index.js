@@ -178,11 +178,13 @@ exp.setMaxBodyDump = function (size) {
  * Because nobody needs stack traces in SuperTests.
  *
  * @param {Error} err The error to set the stack trace of.
+ * @return {Error} The error that has been supplied as a parameter.
  */
 var attachCurrentRequestToError = function (err) {
 	// Mocha's highlighting and indentation expects the stack trace to start with the error message.
 	// Also, we indent the rendered body by four spaces.
 	err.stack = err.message + "\n" + exp.renderCurrentRequest().replace(/^/gm, "    ");
+	return err;
 };
 
 // Get the Test prototype, because we're going to enhance it! \o/
