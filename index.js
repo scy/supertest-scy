@@ -123,7 +123,7 @@ Test.prototype.expectSchema = function (schema, e) {
 		// out what it has been called with.
 		// Note that we cannot do something like fn_args = oldAssert.apply() here and "return arguments"
 		// in the function body, since oldAssert doesn't always return fn's return value. :(
-		var fn_args;
+		var fn_args = undefined;
 		oldAssert.apply(this, [res, function () { fn_args = arguments; }]);
 		// If it received an error, we simply pass that to the _real_ fn and are done.
 		if (fn_args.length > 0 && fn_args[0]) {
