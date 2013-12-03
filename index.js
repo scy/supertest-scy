@@ -135,9 +135,16 @@ exp.debug = function (done) {
  */
 var renderRequest = function (req, number) {
 	var outnumber = (typeof number == "undefined") ? "" : (" #" + number);
-	var out = "===== REQUEST" + outnumber + " =====\n" + req.req._header.replace(/\r/, "");
+	if (!req) {
+		return "===== NO DATA FOR REQUEST" + outnumber + " =====";
+	}
+	var out = "===== REQUEST" + outnumber + " =====\n";
+	out += (req.req && req.req._header) ? req.req._header.replace(/\r/, "") : "[no header data available]\n\n";
 	if (req._data) {
 		out += "===== SUPPLIED DATA =====\n" + JSON.stringify(req._data, null, 2) + "\n\n";
+	}
+	if (!req.res) {
+		return out + "===== NO RESPONSE DATA AVAILABLE =====";
 	}
 	out += "===== RESPONSE =====\nHTTP/" + req.res.httpVersion + " " + req.res.statusCode + "\n";
 	for (var key in req.res.headers) {
