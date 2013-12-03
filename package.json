@@ -1,6 +1,6 @@
 {
   "name": "supertest-scy",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "My extensions to SuperTest",
   "main": "index.js",
   "scripts": {
