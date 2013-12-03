@@ -245,7 +245,8 @@ Test.prototype.expectSchema = function (schema, e) {
 			if (!tv4.validate(res.body, this._schemas[i])) {
 				var e = tv4.error;
 				return fn(attachCurrentRequestToError(new Error(
-					'schema validation failed (' + e.code + ' at ' + e.schemaPath + '): ' + e.message
+					'schema validation failed (' + e.code + ', dpath ' + e.dataPath + ', spath ' + e.schemaPath + '): '
+					+ e.message + (e.subErrors ? "; subErrors:\n" + JSON.stringify(e.subErrors, null, 2) : "")
 				)), res);
 			}
 		}
