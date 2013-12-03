@@ -144,7 +144,16 @@ var renderRequest = function (req, number) {
 		out += key + ": " + req.res.headers[key] + "\n";
 	}
 	var body = req.res.text;
-	out += "\n" + (body.length < maxBodyDump ? body : body.substr(0, maxBodyDump) + "…");
+	out += "\n";
+	if (body.length <= maxBodyDump) {
+		if ((req.res.headers["content-type"] || "") == "application/json") {
+			out += JSON.stringify(JSON.parse(body), null, 2);
+		} else {
+			out += body;
+		}
+	} else {
+		out += body.substr(0, maxBodyDump) + "…";
+	}
 	return out;
 };
 
