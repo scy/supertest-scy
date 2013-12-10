@@ -39,10 +39,12 @@ for (var key in supertest) {
 // We also use tv4 for JSON Schema validation. It's exported for others to use.
 var tv4 = exp.tv4 = require('tv4');
 
-var defaultCredentials = false;
+var defaultCredentials = { user: null, pass: null };
 
 exp.defaultCredentials = function (user, pass) {
-	defaultCredentials = new Buffer(user + ':' + pass).toString('base64');
+	user = (typeof user == "string") ? user : null;
+	pass = (typeof pass == "string") ? pass : null;
+	return defaultCredentials = { user: user, pass: pass };
 };
 
 var legalTldChars = 'abcdefghijklmnopqrstuvwxyz';
@@ -207,8 +209,12 @@ var attachCurrentRequestToError = function (err) {
 var Test = exp.Test;
 
 // Sets the HTTP Basic auth header.
-Test.prototype.auth = function () {
-	return this.set('Authorization', 'Basic ' + defaultCredentials);
+Test.prototype.auth = function (user, pass) {
+	user = (typeof user == "string") ? user : defaultCredentials.user;
+	pass = (typeof pass == "string") ? pass : defaultCredentials.pass;
+	if (typeof user != "string") throw new Error("No user set");
+	if (typeof pass != "string") throw new Error("No password set");
+	return this.set("Authorization", "Basic " + new Buffer(user + ":" + pass).toString("base64"));
 };
 
 // Send data with type form, else it would default to JSON.
