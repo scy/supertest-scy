@@ -199,6 +199,10 @@ exp.setMaxBodyDump = function (size) {
  * @return {Error} The error that has been supplied as a parameter.
  */
 var attachCurrentRequestToError = function (err) {
+	// Do nothing if there is no current request.
+	if (!currentRequest) {
+		return err;
+	}
 	// Mocha's highlighting and indentation expects the stack trace to start with the error message.
 	// (See exports.list in mocha.js.)
 	// Also, we indent the rendered body by four spaces.
