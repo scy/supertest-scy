@@ -204,10 +204,8 @@ var attachCurrentRequestToError = function (err) {
 		return err;
 	}
 	err.request = currentRequest;
-	// Mocha's highlighting and indentation expects the stack trace to start with the error message.
-	// (See exports.list in mocha.js.)
-	// Also, we indent the rendered body by four spaces.
-	err.stack = err.message + "\n" + exp.renderCurrentRequest().replace(/^/gm, "    ");
+	// Keep the original stack trace, but append a request dump to it, indented by four spaces.
+	err.stack = (err.stack ? err.stack + "\n\n" : "") + exp.renderCurrentRequest().replace(/^/gm, "    ");
 	return err;
 };
 
