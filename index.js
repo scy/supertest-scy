@@ -200,6 +200,7 @@ exp.setMaxBodyDump = function (size) {
  */
 var attachCurrentRequestToError = function (err) {
 	// Mocha's highlighting and indentation expects the stack trace to start with the error message.
+	// (See exports.list in mocha.js.)
 	// Also, we indent the rendered body by four spaces.
 	err.stack = err.message + "\n" + exp.renderCurrentRequest().replace(/^/gm, "    ");
 	return err;
@@ -238,15 +239,25 @@ Test.prototype.expectSchema = function (schema, e) {
 		// Note that we cannot do something like fn_args = oldAssert.apply() here and "return arguments"
 		// in the function body, since oldAssert doesn't always return fn's return value. :(
 		var fn_args = undefined;
+		// Additionally, we want to catch errors thrown by fn and attach our request to them.
+		var self = this;
+		var applyFn = function () {
+			try {
+				return fn.apply(self, fn_args);
+			} catch (e) {
+				throw attachCurrentRequestToError(e);
+			}
+		};
+		// Run the old assert and record the arguments the callback was called with.
 		oldAssert.apply(this, [res, function () { fn_args = arguments; }]);
 		// If it received an error, we simply attach the request, pass that to the _real_ fn and are done.
 		if (fn_args.length > 0 && fn_args[0]) {
 			attachCurrentRequestToError(fn_args[0]);
-			return fn.apply(this, fn_args);
+			return applyFn();
 		}
 		// If everything else was fine, it's time to do some work.
 		// But only if there are schemas defined. ;)
-		if (!this._schemas) return fn.apply(this, fn_args);
+		if (!this._schemas) return applyFn();
 		for (var i = 0; i < this._schemas.length; i++) {
 			if (!tv4.validate(res.body, this._schemas[i])) {
 				var e = tv4.error;
@@ -256,6 +267,6 @@ Test.prototype.expectSchema = function (schema, e) {
 				)), res);
 			}
 		}
-		return fn.apply(this, fn_args);
+		return applyFn();
 	};
 })(Test.prototype.assert);
