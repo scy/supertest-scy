@@ -1,4 +1,4 @@
-// These are just some quick extensions to supertest. More documentation and a cleanup to come.
+// See the README.md for more information. This code could use some cleanup, but it's not that awful.
 
 // We provide everything supertest provides.
 var supertest = require('supertest');
